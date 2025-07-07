@@ -2,7 +2,7 @@
 export default function Page() {
   return (
     <div>
-      Hello next!
+      The Wild Oasis. Welcome to the paradise.
     </div>
   )
 }
