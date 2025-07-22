@@ -2,6 +2,9 @@ import { Suspense } from "react";
 import CabinList from "../_components/CabinList";
 import Spinner from "../_components/Spinner";
 
+//Dynamic data will change time to time, 1 hour in 3600 seconds
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Cabins",
 };
