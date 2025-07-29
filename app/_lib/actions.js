@@ -32,7 +32,7 @@ export async function deleteReservation(bookingId) {
   if (!session) throw new Error("You must be logged in");
 
   const guestBookings = await getBookings(session.user.guestId);
-  const guestBookingIds = await guestBookings.map((booking) => booking.id);
+  const guestBookingIds = guestBookings.map((booking) => booking.id);
 
   if (!guestBookingIds.includes(bookingId))
     throw new Error("You are not allowed to delete this bookings");
