@@ -1,10 +1,29 @@
 "use client";
 
+import { differenceInDays } from "date-fns";
 import { useReservation } from "./ReservationContext";
+import { createBooking } from "../_lib/actions";
+import SubmitButton from "./SubmitButton";
 
 function ReservationForm({ cabin, user }) {
-  const { range } = useReservation();
-  const { maxCapacity } = cabin;
+  const { range, resetRange } = useReservation();
+  const { maxCapacity, regularPrice, discount, id } = cabin;
+
+  const startDate = range.from;
+  const endDate = range.to;
+
+  const numNights = differenceInDays(endDate, startDate);
+  const cabinPrice = numNights * (regularPrice - discount);
+
+  const bookingData = {
+    startDate,
+    endDate,
+    numNights,
+    cabinPrice,
+    cabinId: id,
+  };
+
+  const createBookingWithData = createBooking.bind(null, bookingData);
 
   return (
     <div className="bg-primary-900 text-primary-100 text-sm">
@@ -23,7 +42,14 @@ function ReservationForm({ cabin, user }) {
         </div>
       </div>
 
-      <form className="p-6 flex flex-col gap-5">
+      <form
+        // action={createBookingWithData}
+        action={async (formData) => {
+          await createBookingWithData(formData);
+          resetRange();
+        }}
+        className="p-6 flex flex-col gap-5"
+      >
         <div className="space-y-2">
           <label htmlFor="numGuests" className="text-sm">
             How many guests?
@@ -57,10 +83,11 @@ function ReservationForm({ cabin, user }) {
         </div>
 
         <div className="flex justify-between items-center pt-2">
-          <p className="text-xs text-[#9ca3af]">Start by selecting dates</p>
-          <button className="bg-[#d4a55d] hover:bg-[#c4954a] text-[#0c0f14] px-6 py-2 text-sm font-semibold transition">
-            Reserve now
-          </button>
+          {!(startDate && endDate) ? (
+            <p className="text-xs text-[#9ca3af]">Start by selecting dates</p>
+          ) : (
+            <SubmitButton pendingLabel="Reserving...">Reserve now</SubmitButton>
+          )}
         </div>
       </form>
     </div>
